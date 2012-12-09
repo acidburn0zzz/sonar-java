@@ -288,7 +288,8 @@ public class JavaGrammarImpl extends JavaGrammar {
         synchronizedKeyword,
         transientKeyword,
         volatileKeyword,
-        strictfpKeyword));
+        strictfpKeyword,
+        sequence("default", spacing)));
   }
 
   /**
@@ -369,9 +370,9 @@ public class JavaGrammarImpl extends JavaGrammar {
     interfaceMethodOrFieldRest.is(firstOf(
         sequence(constantDeclaratorsRest, semi),
         interfaceMethodDeclaratorRest));
-    interfaceMethodDeclaratorRest.is(formalParameters, zeroOrMore(dim), optional(throwsKeyword, classTypeList), semi);
+    interfaceMethodDeclaratorRest.is(formalParameters, zeroOrMore(dim), optional(throwsKeyword, classTypeList), optional(block), semi);
     interfaceGenericMethodDecl.is(typeParameters, firstOf(type, voidKeyword), identifier, interfaceMethodDeclaratorRest);
-    voidInterfaceMethodDeclaratorsRest.is(formalParameters, optional(throwsKeyword, classTypeList), semi);
+    voidInterfaceMethodDeclaratorsRest.is(formalParameters, optional(throwsKeyword, classTypeList), optional(block), semi);
     constantDeclaratorsRest.is(constantDeclaratorRest, zeroOrMore(comma, constantDeclarator));
     constantDeclarator.is(identifier, constantDeclaratorRest);
     constantDeclaratorRest.is(zeroOrMore(dim), equ, variableInitializer);
@@ -564,8 +565,13 @@ public class JavaGrammarImpl extends JavaGrammar {
     unaryExpression.is(firstOf(
         sequence(prefixOp, unaryExpression),
         sequence(lpar, type, rpar, unaryExpression),
-        sequence(primary, zeroOrMore(selector), zeroOrMore(postFixOp)))).skipIfOneChild();
+        sequence(firstOf(referenceType, superKeyword), memberReferenceSuffix),
+        sequence(primary, zeroOrMore(selector), optional(memberReferenceSuffix), zeroOrMore(postFixOp)))).skipIfOneChild();
+
+    memberReferenceSuffix.is("::", spacing, optional(nonWildcardTypeArguments), firstOf(identifier, newKeyword));
+
     primary.is(firstOf(
+        lambdaExpression,
         parExpression,
         sequence(nonWildcardTypeArguments, firstOf(explicitGenericInvocationSuffix, sequence(thisKeyword, arguments))),
         sequence(thisKeyword, optional(arguments)),
@@ -635,6 +641,17 @@ public class JavaGrammarImpl extends JavaGrammar {
     qualifiedIdentifier.is(identifier, zeroOrMore(dot, identifier));
     dim.is(lbrk, rbrk);
     dimExpr.is(lbrk, expression, rbrk);
+
+    // 15.27. Lambda Expressions (Java 8)
+    lambdaExpression.is(lambdaParameters, "->", spacing, lambdaBody);
+    lambdaParameters.is(firstOf(
+        identifier,
+        sequence(lpar, inferredFormalParameterList, rpar),
+        sequence(lpar, optional(formalParameterDecls), rpar)));
+    inferredFormalParameterList.is(identifier, zeroOrMore(comma, identifier));
+    lambdaBody.is(firstOf(
+        expression,
+        block));
   }
 
 }

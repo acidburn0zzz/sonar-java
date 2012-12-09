@@ -50,4 +50,84 @@ public class ExpressionTest {
         .matches("new HashMap<>()");
   }
 
+  /**
+   * Java 8
+   */
+  @Test
+  public void lambda_expressions() {
+    assertThat(g.expression)
+        // No parameters; result is void
+        .matches("() -> {}")
+        // No parameters, expression body
+        .matches("() -> 42")
+        // No parameters, expression body
+        .matches("() -> null")
+        // No parameters, block body with return
+        .matches("() -> { return 42; }")
+        // No parameters, void block body
+        .matches("() -> { System.gc(); }")
+
+        // Single declared-type parameter
+        .matches("(int x) -> x+1")
+        // Single declared-type parameter
+        .matches("(int x) -> { return x+1; }")
+        // Single inferred-type parameter
+        .matches("(x) -> x+1")
+        // Parens optional for single inferred-type case
+        .matches("x -> x+1")
+
+        // Single declared-type parameter
+        .matches("(String s) -> s.length()")
+        // Single declared-type parameter
+        .matches("(Thread t) -> { t.start(); }")
+        // Single inferred-type parameter
+        .matches("s -> s.length()")
+        // Single inferred-type parameter
+        .matches("t -> { t.start(); }")
+
+        // Multiple declared-type parameters
+        .matches("(int x, int y) -> x+y")
+        // Multiple inferred-type parameters
+        .matches("(x,y) -> x+y")
+        // Modified declared-type parameter
+        .matches("(final int x) -> x+1");
+  }
+
+  /**
+   * Java 8
+   */
+  @Test
+  public void method_references() {
+    assertThat(g.expression)
+        .matches("System::getProperty")
+        .matches("String::length")
+        .matches("List<String>::size")
+        .matches("List::size")
+        .matches("int[]::clone")
+        .matches("T::tvarMember")
+
+        .matches("\"abc\"::length")
+        .matches("foo[x]::bar")
+
+        .matches("(test ? list.map(String::length) : Collections.emptyList())::iterator")
+        .matches("super::toString")
+
+        .matches("String::valueOf")
+        .matches("Arrays::sort")
+        .matches("Arrays::<String>sort");
+  }
+
+  /**
+   * Java 8
+   */
+  @Test
+  public void constructor_references() {
+    assertThat(g.expression)
+        .matches("ArrayList<String>::new")
+        .matches("ArrayList::new")
+        .matches("Foo::<Integer>new")
+        .matches("Bar<String>::<Integer>new")
+        .matches("Outer.Inner::new");
+  }
+
 }

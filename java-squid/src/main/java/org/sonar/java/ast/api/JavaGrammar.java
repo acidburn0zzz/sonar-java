@@ -319,6 +319,17 @@ public abstract class JavaGrammar extends LexerlessGrammar {
   protected Rule keyword;
   protected Rule spacing;
 
+  // Java 8
+
+  public Rule lambdaExpression;
+  public Rule lambdaParameters;
+  public Rule lambdaBody;
+  public Rule inferredFormalParameterList;
+
+  public Rule memberReferenceSuffix;
+
+  public Rule interfaceMethodBody;
+
   @Override
   public Rule getRootRule() {
     return compilationUnit;
