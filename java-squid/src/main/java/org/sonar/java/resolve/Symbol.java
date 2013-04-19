@@ -19,8 +19,6 @@
  */
 package org.sonar.java.resolve;
 
-import com.google.common.collect.ImmutableList;
-
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -133,7 +131,7 @@ public class Symbol {
 
     Scope members;
     TypeSymbol superclass;
-    ImmutableList<TypeSymbol> interfaces;
+    List<TypeSymbol> interfaces;
 
     public TypeSymbol(int flags, String name, Symbol owner) {
       super(TYP, flags, name, owner);
