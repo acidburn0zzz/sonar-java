@@ -1,0 +1,2 @@
+src/test/java/org/sonar/java/resolve/bytecodes should be used instead
+which contains duplicates of those source files in order to automatically compile them as part of tests
