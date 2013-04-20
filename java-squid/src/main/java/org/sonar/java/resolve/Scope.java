@@ -21,6 +21,7 @@ package org.sonar.java.resolve;
 
 import com.google.common.collect.ArrayListMultimap;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -55,6 +56,10 @@ public class Scope {
       scope = scope.next;
     }
     return result;
+  }
+
+  public Collection<Symbol> getAll() {
+    return symbols.values();
   }
 
 }
