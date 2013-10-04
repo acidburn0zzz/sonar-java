@@ -122,6 +122,7 @@ public class ExpressionVisitorTest {
 
     // constructor call
     assertThat(typeOf("this(arguments)")).isSameAs(symbols.unknownType);
+    assertThat(typeOf("<T>this(arguments)")).isSameAs(symbols.unknownType);
   }
 
   @Test
@@ -130,6 +131,7 @@ public class ExpressionVisitorTest {
 
     // constructor call
     assertThat(typeOf("super(arguments)")).isSameAs(symbols.unknownType);
+    assertThat(typeOf("<T>super(arguments)")).isSameAs(symbols.unknownType);
 
     // method call
     assertThat(typeOf("super.method(arguments)")).isSameAs(symbols.unknownType);
