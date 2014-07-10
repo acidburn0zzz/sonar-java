@@ -92,7 +92,98 @@
                   <version>1.3.9</version>
                   <outputDirectory>${project.build.directory}/test-projects/struts-core-1.3.9/bin</outputDirectory>
                 </artifactItem>
+
+                <artifactItem>
+                  <groupId>${project.groupId}</groupId>
+                  <artifactId>sonar-java-plugin</artifactId>
+                  <version>2.3</version>
+                  <classifier>sources</classifier>
+                  <outputDirectory>${project.build.directory}/old-version</outputDirectory>
+                </artifactItem>
               </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>generate-jdiff-old</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>javadoc</goal>
+            </goals>
+            <configuration>
+              <docletArtifact>
+                <groupId>jdiff</groupId>
+                <artifactId>jdiff</artifactId>
+                <version>1.0.9</version>
+              </docletArtifact>
+              <doclet>jdiff.JDiff</doclet>
+              <useStandardDocletOptions>false</useStandardDocletOptions>
+              <additionalparam>
+                -apiname 'old-version'
+              </additionalparam>
+              <sourcepath>${project.build.directory}/old-version</sourcepath>
+              <subpackages>org.sonar.plugins.java.api:org.sonar.plugins.java.api.tree</subpackages>
+            </configuration>
+          </execution>
+          <execution>
+            <id>generate-jdiff-new</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>javadoc</goal>
+            </goals>
+            <configuration>
+              <docletArtifact>
+                <groupId>jdiff</groupId>
+                <artifactId>jdiff</artifactId>
+                <version>1.0.9</version>
+              </docletArtifact>
+              <doclet>jdiff.JDiff</doclet>
+              <useStandardDocletOptions>false</useStandardDocletOptions>
+              <additionalparam>
+                -apiname '${project.version}'
+              </additionalparam>
+              <subpackages>org.sonar.plugins.java.api:org.sonar.plugins.java.api.tree</subpackages>
+            </configuration>
+          </execution>
+          <execution>
+            <id>generate-jdiff</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>javadoc</goal>
+            </goals>
+            <configuration>
+              <docletArtifact>
+                <groupId>jdiff</groupId>
+                <artifactId>jdiff</artifactId>
+                <version>1.0.9</version>
+              </docletArtifact>
+              <doclet>jdiff.JDiff</doclet>
+              <useStandardDocletOptions>false</useStandardDocletOptions>
+              <additionalparam>
+                -oldapi 'old-version'
+                -newapi '${project.version}'
+                -docchanges
+                -d .
+              </additionalparam>
+              <additionalJOptions>
+                <additionalJOption>-J-Dorg.xml.sax.driver=com.sun.org.apache.xerces.internal.parsers.SAXParser</additionalJOption>
+              </additionalJOptions>
+            </configuration>
+          </execution>
+          <execution>
+            <id>default</id>
+            <phase>package</phase>
+            <goals>
+              <goal>javadoc</goal>
+            </goals>
+            <configuration>
+              <subpackages>org.sonar.plugins.java.api:org.sonar.plugins.java.api.tree</subpackages>
             </configuration>
           </execution>
         </executions>
